@@ -1,0 +1,38 @@
+#!/bin/sh
+
+case "$*" in
+    h|help|-h|-help|--help)
+        echo 'Usage: dmenu-polkit-agent [DMENU_OPTIONS]...
+Polkit agent using dmenu for GUI.
+
+Start the polkit agent, with default options:
+  dmenu-polkit-agent
+
+Start the polkit agent, with any additional argument passed directly to dmenu:
+  dmenu-polkit-agent -theme PATH -monitor NUM'
+        exit 0
+        ;;
+esac
+
+# import xrdb colors
+color0=$(xrdb -query | grep '*color0' | awk '{print $2}')
+color5=$(xrdb -query | grep '*color5' | awk '{print $2}')
+color7=$(xrdb -query | grep '*color7' | awk '{print $2}')
+
+# Read incoming messages one by one (line by line) from stdin to variable $msg
+while read -r msg; do
+    # --- shellcheck disable=SC2210
+    if echo "$msg" | jq -e '.action == "request password"' > /dev/null 2>&1; then
+        # Parse msg fields
+        prompt="$(printf '%s' "$msg" | jq -rc '.prompt // "Password:"')"  # Request a password prompt from dmenu
+        response="$(printf '' | dmenu -c -p "$prompt" -nb "$color0" -nf "$color7" -sb "$color5" -sf "$color7" -P < /dev/null)"  # Cancel authentication if no password was given,
+        # otherwise respond with given password
+        if test -z "$response"; then
+            echo '{"action":"cancel"}'
+        else
+            echo "{\"action\":\"authenticate\",\"password\":\"$response\"}"
+        fi
+    fi
+done
+
+echo "exited"

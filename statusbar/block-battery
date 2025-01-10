@@ -1,0 +1,32 @@
+#!/bin/sh
+#Uses Hack Nerd Font
+
+# Loop through all attached batteries and format the info
+for battery in /sys/class/power_supply/BAT?*; do
+	# If non-first battery, print a space separator. 
+	[ -n "${percentage+x}" ] && printf " "
+
+	# Calculate percentage
+	percentage="$(( $(cat "$battery/charge_now") * 100 / $(cat "$battery/charge_full") ))"
+
+	# Display icon according to percentage
+	[ $percentage -ge 75 ] && icon="" ||
+	{ [ $percentage -ge 50 ] && icon="" ||
+	{ [ $percentage -ge 25 ] && icon="" ||
+	icon="";};}
+
+	# Get status
+	case "$(cat "$battery/status" 2>&1)" in
+		"Full") status="" ;;
+		"Discharging")  status="";;
+		"Charging") status="󱐋";;
+		"Not charging") status="󱐋" ;;
+		"Unknown") status="" ;;
+		*) exit 1 ;;
+	esac
+
+	# Print the full picture
+	[ $percentage -eq 100 ] && printf "%s" "$icon" || printf "%s" "$icon$status $percentage%"
+	
+done && printf "\\n"
+

@@ -1,0 +1,27 @@
+#!/bin/sh
+#Uses Hack Nerd Font
+
+# Get volume
+vol="$(wpctl get-volume @DEFAULT_AUDIO_SINK@)"
+
+# If muted, print  and exit.
+[[ $vol == *"[MUTED]" ]] && echo  && exit
+
+# Extract volume between 0-1
+vol="${vol#Volume: }"
+
+# Luke Smith's split function.
+split() {
+	# For ommiting the . without calling and external program.
+	IFS=$2
+	set -- $1
+	printf '%s' "$@"
+}
+
+# Extract after decimal dot
+vol="$(printf "%.0f" "$(split "$vol" ".")")"
+
+# Display icon according to volume
+[ $vol -ge 50 ] && icon="" || { [ $vol -ge 1 ] && icon="" || { echo  && exit; }; }
+
+echo "$icon $vol%"
