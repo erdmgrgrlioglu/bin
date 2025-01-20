@@ -1,5 +1,6 @@
 #!/bin/sh
-#Uses Hack Nerd Font
+# Uses Hack Nerd Font
+# Modified version of Luke Smith's dwmblocks
 
 # Loop through all attached batteries and format the info
 for battery in /sys/class/power_supply/BAT?*; do

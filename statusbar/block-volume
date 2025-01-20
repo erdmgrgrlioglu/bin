@@ -1,5 +1,6 @@
 #!/bin/sh
-#Uses Hack Nerd Font
+# Uses Hack Nerd Font
+# Modified version of Luke Smith's dwmblocks
 
 # Get volume
 vol="$(wpctl get-volume @DEFAULT_AUDIO_SINK@)"

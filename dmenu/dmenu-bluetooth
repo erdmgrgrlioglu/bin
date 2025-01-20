@@ -203,8 +203,6 @@ print_status() {
             fi
         done
         printf "\n"
-    else
-        echo ""
     fi
 }
 

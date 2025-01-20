@@ -1,5 +1,6 @@
 #!/bin/sh
-#Uses Hack Nerd Font
+# Uses Hack Nerd Font
+# Modified version of Luke Smith's dwmblocks
 
 # Wifi
 if [ "$(cat /sys/class/net/w*/operstate 2>/dev/null)" = "up" ] ; then

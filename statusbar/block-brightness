@@ -1,4 +1,5 @@
 #!/bin/sh
+# Modified version of Luke Smith's dwmblocks
 
 # current brightness
 curr_brightness=$(cat /sys/class/backlight/*/brightness)
