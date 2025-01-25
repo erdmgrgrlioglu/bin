@@ -1,33 +1,37 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Uses Hack Nerd Font
 # Modified version of Luke Smith's dwmblocks
 
 # Loop through all attached batteries and format the info
 for battery in /sys/class/power_supply/BAT?*; do
-	# If non-first battery, print a space separator. 
+	# If non-first battery, print a space separator.
 	[ -n "${percentage+x}" ] && printf " "
 
 	# Calculate percentage
-	percentage="$(( $(cat "$battery/charge_now") * 100 / $(cat "$battery/charge_full") ))"
+	percentage="$(($(cat "$battery/charge_now") * 100 / $(cat "$battery/charge_full")))"
 
 	# Display icon according to percentage
-	[ $percentage -ge 75 ] && icon="" ||
-	{ [ $percentage -ge 50 ] && icon="" ||
-	{ [ $percentage -ge 25 ] && icon="" ||
-	icon="";};}
+	if [ $percentage -ge 75 ]; then
+		icon=""
+	elif [ $percentage -ge 50 ]; then
+		icon=""
+	elif [ $percentage -ge 25 ]; then
+		icon=""
+	else
+		icon=""
+	fi
 
 	# Get status
 	case "$(cat "$battery/status" 2>&1)" in
-		"Full") status="" ;;
-		"Discharging")  status="";;
-		"Charging") status="󱐋";;
-		"Not charging") status="󱐋" ;;
-		"Unknown") status="" ;;
-		*) exit 1 ;;
+	"Full") status="" ;;
+	"Discharging") status="" ;;
+	"Charging") status="󱐋" ;;
+	"Not charging") status="󱐋" ;;
+	"Unknown") status="" ;;
+	*) exit 1 ;;
 	esac
 
 	# Print the full picture
 	[ $percentage -eq 100 ] && printf "%s" "$icon" || printf "%s" "$icon$status $percentage%"
-	
-done && printf "\\n"
 
+done && printf "\\n"

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Uses Hack Nerd Font and bluetoothctl
+
+bluetoothctl show | grep -F -q "Powered: yes" && echo ""

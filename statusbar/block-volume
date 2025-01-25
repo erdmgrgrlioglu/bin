@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Uses Hack Nerd Font
 # Modified version of Luke Smith's dwmblocks
 

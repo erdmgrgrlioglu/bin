@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Modified version of Luke Smith's dwmblocks
 
 # current brightness

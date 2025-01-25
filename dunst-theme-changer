@@ -81,7 +81,7 @@ readonly base_dir="$(realpath "$(dirname "$0")")"
 
 # Show ussage
 usage() {
-    grep -e '^##[^#]*$' "$base_dir/$script_name"  | \
+    grep -e '^##[^#]*$' "$base_dir/$script_name" |
         sed -e "s/^##[[:space:]]\{0,1\}//g" \
             -e "s/<script_name>/${script_name}/g"
     exit 2
@@ -96,7 +96,7 @@ if [ "$#" -gt 0 ]; then
 fi
 
 # Function to get resource values
-xrdb_get () {
+xrdb_get() {
     output="$(appres Dunst | grep "$1:" | head -n1 | cut -f2)"
     default="$2"
     printf '%s' "${output:-$default}"
@@ -106,7 +106,7 @@ xrdb_get () {
 # Attributes dictionary. Add or remove attributes (see header for more info)
 #
 declare -A theme_attr_dict=(
-    ["global-font"]="$(xrdb_get 'font' 'Monospace') $(xrdb_get '*.font_size:' '11')"
+    ["global-font"]="$(xrdb_get 'font' 'Hack Nerd Font Mono') $(xrdb_get '*.font_size:' '11')"
     ["global-frame_width"]="$(xrdb_get 'border_width' '1')"
     ["global-frame_color"]="\"$(xrdb_get 'color8' '#65737e')\""
 
@@ -140,17 +140,16 @@ example_conf="$example_conf_dir/dunstrc"
 # User xresources color config file
 readonly user_xr_color_conf="$user_conf_dir/dunstrc_xr_colors"
 
-
 # Check if the user config directory exists
 if ! [ -d "$user_conf_dir" ]; then
     printf 'Creating folder "%s".\n' "$user_conf_dir"
-    mkdir -p  "$user_conf_dir"
+    mkdir -p "$user_conf_dir"
 fi
 
 # Check if the user config file exists
 if ! [ -f "$user_conf" ]; then
     printf '"%s" file does not exist.\nChecking for config file example.' \
-               "$user_conf"
+        "$user_conf"
 
     if [ -d "/usr/share/dunst" ]; then
         # Archlinux default dir and example file
@@ -161,7 +160,7 @@ if ! [ -f "$user_conf" ]; then
         else
             printf 'Could not find the example config file in "%s".
                \nPlease, change $example_conf variable in the script.' \
-                   "$example_conf_dir"
+                "$example_conf_dir"
             exit 1
         fi
 
@@ -178,7 +177,7 @@ if ! [ -f "$user_conf" ]; then
         else
             printf 'Could not find the example config file in "%s".
                \nPlease, change $example_conf variable in the script.' \
-                   "$example_conf_dir"
+                "$example_conf_dir"
             exit 1
         fi
 
@@ -193,7 +192,7 @@ if ! [ -f "$user_conf" ]; then
     # Get the extension to check if the file is compressed
     if [[ "${example_conf##*\.}" == "gz" ]]; then
         # Extract example file to user config file
-        gunzip -c "$example_conf" > "$user_conf"
+        gunzip -c "$example_conf" >"$user_conf"
     else
         cp "$example_conf" "$user_conf_dir"
     fi
@@ -206,7 +205,7 @@ readonly re_empty_comment_line='(^$)|(^[[:space:]]*(\#)|(;))'
 readonly re_attribute_line='^([[:space:]]*)([_[:alnum:]]+)'
 
 # Create an array with the file lines
-mapfile -t conf < "$user_conf"
+mapfile -t conf <"$user_conf"
 
 # Iterate over the file lines
 for idx in "${!conf[@]}"; do
@@ -227,11 +226,11 @@ for idx in "${!conf[@]}"; do
     curr_sett_name="${curr_section}-${curr_attr_name}"
     # If the current attribute is not in our dictionary, continue
     case "$valid_keys" in
-        *"$curr_sett_name"*)
-            printf -v conf[$idx] '    %s = %s' \
-                   "${curr_attr_name}" \
-                   "${theme_attr_dict[$curr_sett_name]}"
-            ;;
+    *"$curr_sett_name"*)
+        printf -v conf[$idx] '    %s = %s' \
+            "${curr_attr_name}" \
+            "${theme_attr_dict[$curr_sett_name]}"
+        ;;
     esac
 done
 
@@ -249,7 +248,7 @@ user_xr_color_conf_content="\
 # After everything is completed, write the new config to a file
 user_xr_color_conf_content+="$(printf '%s\n' "${conf[@]}")"
 
-printf '%s\n' "$user_xr_color_conf_content" > "$user_xr_color_conf"
+printf '%s\n' "$user_xr_color_conf_content" >"$user_xr_color_conf"
 
 printf '"%s" updated successfully.\n' "$user_xr_color_conf"
 
