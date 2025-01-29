@@ -1,0 +1,25 @@
+#!/bin/bash
+# use dmenu to choose what to unmount
+# https://github.com/Ferk/udev-media-automount/blob/master/umount_dmenu
+
+color0=$(xrdb -query | grep "\*color0" | awk '{print $2}')                          # uses xresources
+color5=$(xrdb -query | grep "\*color5" | awk '{print $2}')                          #
+color7=$(xrdb -query | grep "\*color7" | awk '{print $2}')                          #
+MENU=(dmenu -i -c -l 20 -nb "$color0" -nf "$color7" -sb "$color5" -sf "$color7" -p) # uses dmenu
+
+dir="$(awk '$2 ~ /^\/media\// {print $2}' /etc/mtab | cut -d / -f 3 | "${MENU[@]}" "Select media device to remove")"
+dir=$(printf "%s" "$dir") # cleanup escaped chars
+if [ -z "$dir" ] || ! [ -d "/media/$dir" ]; then
+    echo "invalid selection: '$dir'"
+    exit 1
+fi
+
+if result=$(umount "/media/$dir" 2>&1); then
+    rmdir "/media/$dir"
+    notify-send "You can now safely remove $dir"
+    exit 0
+else
+    echo "$result"
+    notify-send "ERROR: $result"
+    exit 32
+fi

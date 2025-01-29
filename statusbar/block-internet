@@ -2,13 +2,13 @@
 # Uses Hack Nerd Font
 # Modified version of Luke Smith's dwmblocks
 
-# Wifi
-[ "$(cat /sys/class/net/w*/operstate 2>/dev/null)" = "up" ] && wifi_icon="$(awk '/^\s*w/ { print int($3 * 100 / 70) "%" }' /proc/net/wireless)"
+# Tunel
+[ -n "$(cat /sys/class/net/tun*/operstate 2>/dev/null)" ] && tunel="󰌾"
 
 # Ethernet
-[ "$(cat /sys/class/net/e*/operstate 2>/dev/null)" = 'up' ] && ether_icon="󰈀"
+[ "$(cat /sys/class/net/e*/operstate 2>/dev/null)" = 'up' ] && ethernet="󰈀"
 
-# TUN
-[ -n "$(cat /sys/class/net/tun*/operstate 2>/dev/null)" ] && tun_icon="󰌾"
+# Wifi
+[ "$(cat /sys/class/net/w*/operstate 2>/dev/null)" = "up" ] && wifi=""
 
-echo "$wifi_icon$ether_icon$tun_icon" | awk '$1=$1' FS= OFS=" "
+echo "$(echo "$tunel$ethernet$wifi" | awk '$1=$1' FS= OFS=" ")$(awk '/^\s*w/ { print " " int($3*100/70) "%" }' /proc/net/wireless)"
